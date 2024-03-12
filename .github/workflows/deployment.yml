@@ -5,9 +5,9 @@ on:
     branches:
       - main
 
-permissions:
-      id-token: write
-      contents: write
+# permissions:
+#       id-token: write
+#       contents: write
 
 env:
   # AZURE_FUNCTIONAPP_NAME: github.repository_name 
@@ -46,18 +46,18 @@ jobs:
         run: | 
          az login --use-device-code
          
-      - name: 'Create a resource group'
+      - name: 'Create a Resource Group'
         run: |
-          az group create --name AzureFunctionsQuickstart-rg --location westus
+          az group create --name AzureSeverlessGroup --location southafricanorth
           
       - name: 'Create Azure Storage'
         run: |
-          az storage account create --name ${ --location westus --resource-group AzureFunctionsQuickstart-rg --sku Standard_LRS --allow-blob-public-access false
+          az storage account create --name msfuncstorage --location southafricanorth --resource-group AzureSeverlessGroup --sku Standard_LRS --allow-blob-public-access false
 
 
       - name: 'Create Azure Function app'
         run: |
-          az functionapp create --resource-group AzureFunctionsQuickstart-rg --consumption-plan-location westus --runtime node --runtime-version 20 --functions-version 4 --name ${{github.repository_name }} --storage-account stowre
+          az functionapp create --resource-group AzureSeverlessGroup --consumption-plan-location southafricanorth --runtime node --runtime-version 20 --functions-version 4 --name ms-functionapp --storage-account msfuncstorage
  
  
       # - name: 'Run Azure Functions Action'
