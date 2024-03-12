@@ -57,7 +57,7 @@ jobs:
 
       - name: 'Create Azure Function app'
         run: |
-          az functionapp create --resource-group AzureSeverlessGroup --consumption-plan-location southafricanorth --runtime node --runtime-version 20 --functions-version 4 --name ms-functionapp --storage-account msfuncstorage
+          az functionapp create --resource-group AzureSeverlessGroup --consumption-plan-location southafricanorth --runtime node --runtime-version 20 --functions-version 4 --name ms-serverlessapp --storage-account msfuncstorage
  
  
       # - name: 'Run Azure Functions Action'
