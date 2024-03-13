@@ -55,10 +55,11 @@ jobs:
           az functionapp create --resource-group AzureSeverlessGroup --consumption-plan-location southafricanorth --runtime node --runtime-version 20 --functions-version 4 --name ms-serverlessapp --storage-account msfuncstorage
  
  
-      # - name: 'Run Azure Functions Action'
-      #   uses: Azure/functions-action@v1
-         
-      #   with:
-      #   app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-      #   package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-      #   publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'ms-serverlessapp'
+          # slot-name: 'production'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+
