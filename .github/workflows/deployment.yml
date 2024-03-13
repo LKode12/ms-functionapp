@@ -5,13 +5,7 @@ on:
     branches:
       - main
       
-# permissions:
-#       id-token: write
-#       contents: read
-#       actions: read
-    
 env:
-  # AZURE_FUNCTIONAPP_NAME: github.repository_name 
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/functions' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
@@ -33,9 +27,6 @@ jobs:
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           npm install -g azure-functions-core-tools@3 --unsafe-perm true
-
-          # npm run build --if-present
-          # npm run test --if-present
           popd
       
       - name: Upload artifact for deployment job
@@ -43,46 +34,31 @@ jobs:
         with:
           name: node-app
           path: .
-
+      
       - name: Login to Azure
-        # uses: azure/login@v1
-        # with:
-        #   client-id: ${{ secrets.CLIENT_ID }}
-        #   tenant-id: ${{ secrets.TENANT_ID }}
-        #   subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1F49503CF7A84349843AA75757110492 }}
-    
-        
-        run: | 
-         az login --use-device-code
+        run: az login --use-device-code
          
       - name: 'Create a Resource Group'
-        run: |
-          az group create --name AzureSeverlessGroup --location southafricanorth
+        run: az group create --name AzureSeverlessGroup --location southafricanorth
           
       - name: 'Create Azure Storage'
-        run: |
-          az storage account create --name msfuncstorage --location southafricanorth --resource-group AzureSeverlessGroup --sku Standard_LRS --allow-blob-public-access false
-
-
+        run: az storage account create --name msfuncstorage --location southafricanorth --resource-group AzureSeverlessGroup --sku Standard_LRS --allow-blob-public-access false
+      
       - name: 'Create Azure Function app'
         run: |
           az functionapp create --resource-group AzureSeverlessGroup --consumption-plan-location southafricanorth --runtime node --runtime-version 20 --functions-version 4 --name ms-serverlessapp --storage-account msfuncstorage
- 
- 
-      # - name: 'Run Azure Functions Action'
-      #   uses: Azure/functions-action@v1
-      #   id: fa
-      #   with:
-      #     app-name: 'ms-serverlessapp'
-      #     # slot-name: 'production'
-      #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          
+      - name: 'Set Azure Function app URL as output'
+        id: set-url
+        run: |
+          echo "::set-output name=webapp-url::$(az functionapp show --name ms-serverlessapp --resource-group AzureSeverlessGroup --query defaultHostName -o tsv)"
       
   deploy:
     runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ needs.build.outputs.webapp-url }} # Use the output from the build job
     permissions:
       id-token: write #This is required for requesting the JWT
 
@@ -102,7 +78,6 @@ jobs:
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
-        id: fa
         with:
           app-name: 'ms-serverlessapp'
           slot-name: 'Production'
