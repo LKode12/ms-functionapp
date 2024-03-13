@@ -5,10 +5,10 @@ on:
     branches:
       - main
       
-permissions:
-      id-token: write
-      contents: read
-      actions: read
+# permissions:
+#       id-token: write
+#       contents: read
+#       actions: read
     
 env:
   # AZURE_FUNCTIONAPP_NAME: github.repository_name 
@@ -45,15 +45,15 @@ jobs:
           path: .
 
       - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.CLIENT_ID }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1F49503CF7A84349843AA75757110492 }}
+        # uses: azure/login@v1
+        # with:
+        #   client-id: ${{ secrets.CLIENT_ID }}
+        #   tenant-id: ${{ secrets.TENANT_ID }}
+        #   subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1F49503CF7A84349843AA75757110492 }}
     
         
-        # run: | 
-        #  az login --use-device-code
+        run: | 
+         az login --use-device-code
          
       - name: 'Create a Resource Group'
         run: |
@@ -76,6 +76,7 @@ jobs:
       #     app-name: 'ms-serverlessapp'
       #     # slot-name: 'production'
       #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+      
   deploy:
     runs-on: windows-latest
     needs: build
