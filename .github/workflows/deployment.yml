@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-
-# permissions:
-#       id-token: write
-#       contents: write
-
 env:
   # AZURE_FUNCTIONAPP_NAME: github.repository_name 
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/functions' # set this to the path to your web app project, defaults to the repository root
